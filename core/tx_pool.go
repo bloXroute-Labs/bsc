@@ -1143,7 +1143,13 @@ func (pool *TxPool) runReorg(done chan struct{}, reset *txpoolResetRequest, dirt
 	if len(events) > 0 {
 		var txs []*types.Transaction
 		for _, set := range events {
-			txs = append(txs, set.Flatten()...)
+			for _, tx := range set.Flatten() {
+				if !pool.IsPrivateTxHash(tx.Hash()) {
+					txs = append(txs, tx)
+				} else {
+					log.Info("skipping tx during reorg", "hash", tx.Hash())
+				}
+			}
 		}
 		pool.txFeed.Send(NewTxsEvent{txs})
 	}
