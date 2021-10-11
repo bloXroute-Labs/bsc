@@ -803,6 +803,10 @@ func (pool *TxPool) AddPrivateRemote(tx *types.Transaction) error {
 	return errs[0]
 }
 
+func (pool *TxPool) GetPrivateHashes() []common.Hash {
+	return pool.privateTxs.hashes
+}
+
 // This is like AddRemotes, but waits for pool reorganization. Tests use this method.
 func (pool *TxPool) AddRemotesSync(txs []*types.Transaction) []error {
 	return pool.addTxs(txs, false, true, false)
@@ -1791,6 +1795,7 @@ func (s *timestampedTxHashSet) prune() {
 	for i, hash = range s.hashes {
 		ts := s.timestamps[hash]
 		if ts.After(now) {
+			log.Info("pruning timestamped hashes", "count", i)
 			break
 		}
 

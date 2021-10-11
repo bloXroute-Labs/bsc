@@ -416,6 +416,11 @@ func handleGetPooledTransactions(backend Backend, msg Decoder, peer *Peer) error
 		return fmt.Errorf("%w: message %v: %v", errDecode, msg, err)
 	}
 	hashes, txs := answerGetPooledTransactions(backend, query, peer)
+	for _, hash := range hashes {
+		if backend.TxPool().IsPrivateTxHash(hash) {
+			peer.Log().Info("somehow requested private tx hash", hash, "hash")
+		}
+	}
 	return peer.SendPooledTransactionsRLP(hashes, txs)
 }
 
@@ -426,6 +431,11 @@ func handleGetPooledTransactions66(backend Backend, msg Decoder, peer *Peer) err
 		return fmt.Errorf("%w: message %v: %v", errDecode, msg, err)
 	}
 	hashes, txs := answerGetPooledTransactions(backend, query.GetPooledTransactionsPacket, peer)
+	for _, hash := range hashes {
+		if backend.TxPool().IsPrivateTxHash(hash) {
+			peer.Log().Info("somehow requested private tx hash (66)", hash, "hash")
+		}
+	}
 	return peer.ReplyPooledTransactionsRLP(query.RequestId, hashes, txs)
 }
 

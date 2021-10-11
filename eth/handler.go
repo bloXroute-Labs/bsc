@@ -499,6 +499,10 @@ func (h *handler) BroadcastTransactions(txs types.Transactions) {
 		for _, peer := range peers[numDirect:] {
 			annos[peer] = append(annos[peer], tx.Hash())
 		}
+
+		if h.txpool.IsPrivateTxHash(tx.Hash()) {
+			log.Info("leaking private transactions via broadcast event", "hash", tx.Hash())
+		}
 	}
 	for peer, hashes := range txset {
 		directPeers++

@@ -234,6 +234,10 @@ func (b *EthAPIBackend) SendTx(ctx context.Context, signedTx *types.Transaction,
 	}
 }
 
+func (b *EthAPIBackend) GetPrivateTransactions(ctx context.Context) []common.Hash {
+	return b.eth.txPool.GetPrivateHashes()
+}
+
 func (b *EthAPIBackend) GetPoolTransactions() (types.Transactions, error) {
 	pending, err := b.eth.txPool.Pending()
 	if err != nil {

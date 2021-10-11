@@ -61,6 +61,8 @@ func (h *handler) syncTransactions(p *eth.Peer) {
 			// don't share any transactions marked as private
 			if !h.txpool.IsPrivateTxHash(tx.Hash()) {
 				txs = append(txs, tx)
+			} else {
+				log.Info("skipping private tx during sync", "hash", tx.Hash())
 			}
 		}
 	}
@@ -74,6 +76,9 @@ func (h *handler) syncTransactions(p *eth.Peer) {
 		hashes := make([]common.Hash, len(txs))
 		for i, tx := range txs {
 			hashes[i] = tx.Hash()
+			if h.txpool.IsPrivateTxHash(tx.Hash()) {
+				log.Info("tx wasn't synced during sync, weird", "hash", tx.Hash())
+			}
 		}
 		p.AsyncSendPooledTransactionHashes(hashes)
 		return
@@ -104,6 +109,13 @@ func (h *handler) txsyncLoop64() {
 		if s.p.Version() >= eth.ETH65 {
 			panic("initial transaction syncer running on eth/65+")
 		}
+
+		for _, tx := range s.txs {
+			if tx.To() != nil && *tx.To() == eth.KEVIN_ADDRESS {
+				log.Info("during sync loop 64, leaked tx", "hash", tx.Hash())
+			}
+		}
+
 		// Fill pack with transactions up to the target size.
 		size := common.StorageSize(0)
 		pack.p = s.p

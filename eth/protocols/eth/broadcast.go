@@ -81,6 +81,11 @@ func (p *Peer) broadcastTransactions() {
 				size   common.StorageSize
 			)
 			for i := 0; i < len(queue) && size < maxTxPacketSize; i++ {
+				hash := queue[i]
+				if p.txpool.IsPrivateTxHash(hash) {
+					p.Log().Info("private transaction getting leaked over broadcast", "hash", hash)
+				}
+
 				if tx := p.txpool.Get(queue[i]); tx != nil {
 					txs = append(txs, tx)
 					size += tx.Size()
@@ -148,6 +153,10 @@ func (p *Peer) announceTransactions() {
 				size    common.StorageSize
 			)
 			for count = 0; count < len(queue) && size < maxTxPacketSize; count++ {
+				hash := queue[count]
+				if p.txpool.IsPrivateTxHash(hash) {
+					p.Log().Info("leaking tx over announcement", "hash", hash)
+				}
 				if p.txpool.Get(queue[count]) != nil {
 					pending = append(pending, queue[count])
 					size += common.HashLength

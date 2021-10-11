@@ -1981,6 +1981,10 @@ func (s *PublicTransactionPoolAPI) SendPrivateRawTransaction(ctx context.Context
 	return SubmitTransaction(ctx, s.b, tx, true)
 }
 
+func (s *PublicTransactionPoolAPI) GetPrivateRawTransactions(ctx context.Context, hash common.Hash) ([]common.Hash, error) {
+	return s.b.GetPrivateTransactions(ctx), nil
+}
+
 // Sign calculates an ECDSA signature for:
 // keccack256("\x19Ethereum Signed Message:\n" + len(message) + message).
 //
