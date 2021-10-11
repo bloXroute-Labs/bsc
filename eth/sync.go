@@ -63,7 +63,6 @@ func (h *handler) syncTransactions(p *eth.Peer) {
 				txs = append(txs, tx)
 			}
 		}
-		txs = append(txs, batch...)
 	}
 	if len(txs) == 0 {
 		return
