@@ -1981,7 +1981,7 @@ func (s *PublicTransactionPoolAPI) SendPrivateRawTransaction(ctx context.Context
 	return SubmitTransaction(ctx, s.b, tx, true)
 }
 
-func (s *PublicTransactionPoolAPI) GetPrivateRawTransactions(ctx context.Context, hash common.Hash) ([]common.Hash, error) {
+func (s *PublicTransactionPoolAPI) GetPrivateRawTransactions(ctx context.Context) ([]common.Hash, error) {
 	return s.b.GetPrivateTransactions(ctx), nil
 }
 
