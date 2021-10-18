@@ -213,7 +213,7 @@ func (config *TxPoolConfig) sanitize() TxPoolConfig {
 	}
 	if conf.PrivateTxLifetime < 1 {
 		log.Warn("Sanitizing invalid txpool private tx lifetime", "provided", conf.PrivateTxLifetime, "updated", DefaultTxPoolConfig.PrivateTxLifetime)
-		conf.Lifetime = DefaultTxPoolConfig.PrivateTxLifetime
+		conf.PrivateTxLifetime = DefaultTxPoolConfig.PrivateTxLifetime
 	}
 	return conf
 }
@@ -1773,7 +1773,7 @@ func (s *timestampedTxHashSet) Add(hash common.Hash) {
 	defer s.lock.Unlock()
 
 	s.hashes = append(s.hashes, hash)
-	s.timestamps[hash] = time.Now()
+	s.timestamps[hash] = time.Now().Add(s.ttl)
 }
 
 func (s *timestampedTxHashSet) Contains(hash common.Hash) bool {
@@ -1788,11 +1788,10 @@ func (s *timestampedTxHashSet) prune() {
 	defer s.lock.Unlock()
 
 	var (
-		i    int
-		hash common.Hash
-		now  = time.Now()
+		count int
+		now   = time.Now()
 	)
-	for i, hash = range s.hashes {
+	for i, hash := range s.hashes {
 		ts := s.timestamps[hash]
 		if ts.After(now) {
 			log.Info("pruning timestamped hashes", "count", i)
@@ -1800,9 +1799,10 @@ func (s *timestampedTxHashSet) prune() {
 		}
 
 		delete(s.timestamps, hash)
+		count += 1
 	}
 
-	s.hashes = s.hashes[i:]
+	s.hashes = s.hashes[count:]
 }
 
 // numSlots calculates the number of slots needed for a single transaction.
