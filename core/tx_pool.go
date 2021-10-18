@@ -1146,8 +1146,6 @@ func (pool *TxPool) runReorg(done chan struct{}, reset *txpoolResetRequest, dirt
 			for _, tx := range set.Flatten() {
 				if !pool.IsPrivateTxHash(tx.Hash()) {
 					txs = append(txs, tx)
-				} else {
-					log.Info("skipping tx during reorg", "hash", tx.Hash())
 				}
 			}
 		}
