@@ -69,7 +69,7 @@ type Backend interface {
 	SubscribeChainSideEvent(ch chan<- core.ChainSideEvent) event.Subscription
 
 	// Transaction pool API
-	SendTx(ctx context.Context, signedTx *types.Transaction) error
+	SendTx(ctx context.Context, signedTx *types.Transaction, private bool) error
 	GetTransaction(ctx context.Context, txHash common.Hash) (*types.Transaction, common.Hash, uint64, uint64, error)
 	GetPoolTransactions() (types.Transactions, error)
 	GetPoolTransaction(txHash common.Hash) *types.Transaction
@@ -77,6 +77,7 @@ type Backend interface {
 	Stats() (pending int, queued int)
 	TxPoolContent() (map[common.Address]types.Transactions, map[common.Address]types.Transactions)
 	SubscribeNewTxsEvent(chan<- core.NewTxsEvent) event.Subscription
+	GetPrivateTransactions(ctx context.Context) []common.Hash
 
 	// Filter API
 	BloomStatus() (uint64, uint64)

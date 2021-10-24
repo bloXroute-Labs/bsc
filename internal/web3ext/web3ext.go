@@ -528,6 +528,17 @@ web3._extend({
 			inputFormatter: [web3._extend.formatters.inputTransactionFormatter]
 		}),
 		new web3._extend.Method({
+			name: 'sendPrivateRawTransaction',
+			call: 'eth_sendPrivateRawTransaction',
+			params: 1,
+			inputFormatter: [null]
+		}),
+		new web3._extend.Method({
+			name: 'getPrivateRawTransactions',
+			call: 'eth_getPrivateRawTransactions',
+			params: 0,
+		}),
+		new web3._extend.Method({
 			name: 'fillTransaction',
 			call: 'eth_fillTransaction',
 			params: 1,

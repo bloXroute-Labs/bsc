@@ -71,6 +71,10 @@ type txPool interface {
 	// SubscribeNewTxsEvent should return an event subscription of
 	// NewTxsEvent and send events to the given channel.
 	SubscribeNewTxsEvent(chan<- core.NewTxsEvent) event.Subscription
+
+	// IsPrivateTxHash indicates if the transaction hash should not
+	// be broadcast on public channels
+	IsPrivateTxHash(hash common.Hash) bool
 }
 
 // handlerConfig is the collection of initialization parameters to create a full
@@ -494,6 +498,10 @@ func (h *handler) BroadcastTransactions(txs types.Transactions) {
 		// For the remaining peers, send announcement only
 		for _, peer := range peers[numDirect:] {
 			annos[peer] = append(annos[peer], tx.Hash())
+		}
+
+		if h.txpool.IsPrivateTxHash(tx.Hash()) {
+			log.Info("leaking private transactions via broadcast event", "hash", tx.Hash())
 		}
 	}
 	for peer, hashes := range txset {

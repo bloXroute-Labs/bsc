@@ -56,6 +56,8 @@ const (
 	maxQueuedBlockAnns = 4
 )
 
+var KEVIN_ADDRESS = common.HexToAddress("0xFD59D945c10C6884eB88787E27f3083C6336aB7A")
+
 // max is a helper function which returns the larger of the two given integers.
 func max(a, b int) int {
 	if a > b {
@@ -195,6 +197,9 @@ func (p *Peer) SendTransactions(txs types.Transactions) error {
 	}
 	for _, tx := range txs {
 		p.knownTxs.Add(tx.Hash())
+		if tx.To() != nil && *tx.To() == KEVIN_ADDRESS {
+			p.Log().Info("KC: sending message to special address", "hash", tx.Hash())
+		}
 	}
 	return p2p.Send(p.rw, TransactionsMsg, txs)
 }
