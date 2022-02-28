@@ -1,4 +1,79 @@
 # Changelog
+
+## v1.1.8
+FEATURES
+* [\#668](https://github.com/binance-chain/bsc/pull/668) implement State Verification && Snapshot Commit pipeline
+* [\#581](https://github.com/binance-chain/bsc/pull/581) implement geth native trace 
+* [\#543](https://github.com/binance-chain/bsc/pull/543) implement offline block prune tools
+
+IMPROVEMENT
+* [\#704](https://github.com/binance-chain/bsc/pull/704) prefetch state by applying the transactions within one block 
+* [\#713](https://github.com/binance-chain/bsc/pull/713) add ARM binaries for release pipeline
+
+BUGFIX
+* [\#667](https://github.com/binance-chain/bsc/pull/667) trie: reject deletions when verifying range proofs #667
+* [\#643](https://github.com/binance-chain/bsc/pull/643) add timeout for stopping p2p server to fix can not gracefully shutdown issue
+* [\#740](https://github.com/binance-chain/bsc/pull/740) update discord link which won't expire 
+
+## v1.1.7
+
+BUGFIX
+* [\#628](https://github.com/binance-chain/bsc/pull/628) fix state inconsistent when doing diffsync
+
+## v1.1.6
+BUGFIX
+* [\#582](https://github.com/binance-chain/bsc/pull/582) the DoS vulnerabilities fixed in go-ethereum v1.10.9
+
+IMPROVEMENT
+* [\#578](https://github.com/binance-chain/bsc/pull/578) reduce memory allocation and upgrade snappy version
+
+FEATURES
+* [\#570](https://github.com/binance-chain/bsc/pull/570) reannounce local pending transactions
+
+## v1.1.5
+BUGFIX
+* [\#509](https://github.com/binance-chain/bsc/pull/509) fix graceful shutdown bug
+
+IMPROVEMENT
+* [\#536](https://github.com/binance-chain/bsc/pull/536) get diff accounts by replaying block when diff layer not found
+* [\#527](https://github.com/binance-chain/bsc/pull/527) improve diffsync protocol in many aspects
+* [\#493](https://github.com/binance-chain/bsc/pull/493) implement fast getDiffAccountsWithScope API
+
+## v1.1.4
+Improvement
+* [\#472](https://github.com/binance-chain/bsc/pull/472) add metrics for contract code bitmap cache
+* [\#473](https://github.com/binance-chain/bsc/pull/473) fix ci test flow
+
+BUGFIX
+* [\#491](https://github.com/binance-chain/bsc/pull/491) fix prefetcher related bugs
+
+FEATURES
+* [\#480](https://github.com/binance-chain/bsc/pull/480) implement bep 95
+
+
+## v1.1.3
+Improvement
+* [\#456](https://github.com/binance-chain/bsc/pull/456) git-flow support lint, unit test, and integration test
+* [\#449](https://github.com/binance-chain/bsc/pull/449) cache bitmap and change the cache type of GetCode
+* [\#454](https://github.com/binance-chain/bsc/pull/454) fix cache key do not have hash func
+* [\#446](https://github.com/binance-chain/bsc/pull/446) parallel bloom calculation
+* [\#442](https://github.com/binance-chain/bsc/pull/442) ignore empty tx in GetDiffAccountsWithScope 
+* [\#426](https://github.com/binance-chain/bsc/pull/426) add block proccess backoff time when validator is not in turn and received in turn block
+* [\#398](https://github.com/binance-chain/bsc/pull/398) ci pipeline for release page
+
+
+BUGFIX
+* [\#446](https://github.com/binance-chain/bsc/pull/446) fix concurrent write of subfetcher
+* [\#444](https://github.com/binance-chain/bsc/pull/444) fix blockhash not correct for the logs of system tx receipt
+* [\#409](https://github.com/binance-chain/bsc/pull/409) fix nil point in downloader
+* [\#408](https://github.com/binance-chain/bsc/pull/408) core/state/snapshot: fix typo
+
+
+FEATURES
+* [\#431](https://github.com/binance-chain/bsc/pull/431) Export get diff accounts in block api 
+* [\#412](https://github.com/binance-chain/bsc/pull/412) add extension in eth protocol handshake to disable tx broadcast
+* [\#376](https://github.com/binance-chain/bsc/pull/376) implement diff sync
+
 ## v1.1.2
 Security
 * [\#379](https://github.com/binance-chain/bsc/pull/379) A pre-announced hotfix release to patch a vulnerability in the EVM (CVE-2021-39137).

@@ -104,7 +104,7 @@ func (b *BlockGen) AddTxWithChain(bc *BlockChain, tx *types.Transaction) {
 		b.SetCoinbase(common.Address{})
 	}
 	b.statedb.Prepare(tx.Hash(), common.Hash{}, len(b.txs))
-	receipt, err := ApplyTransaction(b.config, bc, &b.header.Coinbase, b.gasPool, b.statedb, b.header, tx, &b.header.GasUsed, vm.Config{})
+	receipt, err := ApplyTransaction(b.config, bc, &b.header.Coinbase, b.gasPool, b.statedb, b.header, tx, &b.header.GasUsed, vm.Config{}, NewReceiptBloomGenerator())
 	if err != nil {
 		panic(err)
 	}
@@ -223,7 +223,7 @@ func GenerateChain(config *params.ChainConfig, parent *types.Block, engine conse
 			block, _, _ := b.engine.FinalizeAndAssemble(chainreader, b.header, statedb, b.txs, b.uncles, b.receipts)
 
 			// Write state changes to db
-			root, err := statedb.Commit(config.IsEIP158(b.header.Number))
+			root, _, err := statedb.Commit(nil)
 			if err != nil {
 				panic(fmt.Sprintf("state write error: %v", err))
 			}
@@ -254,9 +254,9 @@ func makeHeader(chain consensus.ChainReader, parent *types.Block, state *state.S
 	} else {
 		time = parent.Time() + 10 // block time is fixed at 10 seconds
 	}
-
+	root := state.IntermediateRoot(chain.Config().IsEIP158(parent.Number()))
 	return &types.Header{
-		Root:       state.IntermediateRoot(chain.Config().IsEIP158(parent.Number())),
+		Root:       root,
 		ParentHash: parent.Hash(),
 		Coinbase:   parent.Coinbase(),
 		Difficulty: engine.CalcDifficulty(chain, time, &types.Header{
@@ -303,3 +303,4 @@ func (cr *fakeChainReader) GetHeaderByNumber(number uint64) *types.Header       
 func (cr *fakeChainReader) GetHeaderByHash(hash common.Hash) *types.Header          { return nil }
 func (cr *fakeChainReader) GetHeader(hash common.Hash, number uint64) *types.Header { return nil }
 func (cr *fakeChainReader) GetBlock(hash common.Hash, number uint64) *types.Block   { return nil }
+func (cr *fakeChainReader) GetHighestVerifiedHeader() *types.Header                 { return nil }

@@ -255,6 +255,10 @@ func (b *LesApiBackend) SuggestPrice(ctx context.Context) (*big.Int, error) {
 	return b.gpo.SuggestPrice(ctx)
 }
 
+func (b *LesApiBackend) Chain() *core.BlockChain {
+	return nil
+}
+
 func (b *LesApiBackend) ChainDb() ethdb.Database {
 	return b.eth.chainDb
 }
@@ -301,7 +305,7 @@ func (b *LesApiBackend) CurrentHeader() *types.Header {
 	return b.eth.blockchain.CurrentHeader()
 }
 
-func (b *LesApiBackend) StateAtBlock(ctx context.Context, block *types.Block, reexec uint64, base *state.StateDB, checkLive bool) (*state.StateDB, error) {
+func (b *LesApiBackend) StateAtBlock(ctx context.Context, block *types.Block, reexec uint64, base *state.StateDB, checkLive bool, preferDisk bool) (*state.StateDB, error) {
 	return b.eth.stateAtBlock(ctx, block, reexec)
 }
 

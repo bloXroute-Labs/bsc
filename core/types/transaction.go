@@ -82,6 +82,11 @@ type TxData interface {
 	setSignatureValues(chainID, v, r, s *big.Int)
 }
 
+// Time returns transaction's time
+func (tx *Transaction) Time() time.Time {
+	return tx.time
+}
+
 // EncodeRLP implements rlp.Encoder
 func (tx *Transaction) EncodeRLP(w io.Writer) error {
 	if tx.Type() == LegacyTxType {
@@ -477,6 +482,10 @@ func (t *TransactionsByPriceAndNonce) Shift() {
 // and hence all subsequent ones should be discarded from the same account.
 func (t *TransactionsByPriceAndNonce) Pop() {
 	heap.Pop(&t.heads)
+}
+
+func (t *TransactionsByPriceAndNonce) CurrentSize() int {
+	return len(t.heads)
 }
 
 // Message is a fully derived transaction and implements core.Message
