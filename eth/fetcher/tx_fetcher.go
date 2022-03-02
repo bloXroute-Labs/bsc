@@ -303,9 +303,11 @@ func (f *TxFetcher) Enqueue(peer string, txs []*types.Transaction, direct bool) 
 			}
 		}
 		added = append(added, txs[i].Hash())
-		if err == nil {
-			log.Info("bloXroute - tx added to txpool", "tx_hash", txs[i].Hash(), "source", peer)
+		op := "bloXroute - tx added to txpool"
+		if err != nil {
+			op = "bloXroute - tx already in txpool"
 		}
+		log.Info(op, "tx_hash", txs[i].Hash(), "source", peer)
 	}
 	if direct {
 		txReplyKnownMeter.Mark(duplicate)
