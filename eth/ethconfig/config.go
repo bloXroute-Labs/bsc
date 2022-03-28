@@ -19,6 +19,7 @@ package ethconfig
 
 import (
 	"math/big"
+	"net/url"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -207,6 +208,18 @@ type Config struct {
 	// RPCTxFeeCap is the global transaction fee(price * gaslimit) cap for
 	// send-transction variants. The unit is ether.
 	RPCTxFeeCap float64
+
+	// BxAPIEndpoints is a list of blxr_tx RPC endpoints that should be forwarded to.
+	// This supports http/https endpoints.
+	BxAPIEndpoints []*url.URL
+
+	// BxAPIAuthHeader is the authentication header for submitting requests to blxr_tx.
+	// This field must be set (even "" for local gateways) for any forwarding.
+	BxAPIAuthHeader string
+
+	// BxAPIAllowInsecure allows self-signed CA certificates when submitting blxr_tx RPC requests.
+	// This is necessary for https endpoints to specific Cloud API IP addresses.
+	BxAPIAllowInsecure bool
 
 	// Checkpoint is a hardcoded checkpoint which can be nil.
 	Checkpoint *params.TrustedCheckpoint `toml:",omitempty"`

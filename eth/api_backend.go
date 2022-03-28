@@ -45,6 +45,11 @@ type EthAPIBackend struct {
 	allowUnprotectedTxs bool
 	eth                 *Ethereum
 	gpo                 *gasprice.Oracle
+	bxClients           BxAPIClients
+}
+
+func NewEthAPIBackend(extRPCEnabled bool, allowUnprotectedTxs bool, eth *Ethereum, gpo *gasprice.Oracle) *EthAPIBackend {
+	return &EthAPIBackend{extRPCEnabled: extRPCEnabled, allowUnprotectedTxs: allowUnprotectedTxs, eth: eth, gpo: gpo, bxClients: NewBxAPIClients(eth.config)}
 }
 
 // ChainConfig returns the active chain configuration.
@@ -227,6 +232,7 @@ func (b *EthAPIBackend) SubscribeLogsEvent(ch chan<- []*types.Log) event.Subscri
 }
 
 func (b *EthAPIBackend) SendTx(ctx context.Context, signedTx *types.Transaction) error {
+	b.bxClients.SubmitTx(ctx, signedTx)
 	return b.eth.txPool.AddLocal(signedTx)
 }
 

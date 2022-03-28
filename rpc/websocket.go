@@ -180,15 +180,13 @@ func parseOriginURL(origin string) (string, string, string, error) {
 	return scheme, hostname, port, nil
 }
 
-// DialWebsocketWithDialer creates a new RPC client that communicates with a JSON-RPC server
-// that is listening on the given endpoint using the provided dialer.
-func DialWebsocketWithDialer(ctx context.Context, endpoint, origin string, dialer websocket.Dialer) (*Client, error) {
-	endpoint, header, err := wsClientHeaders(endpoint, origin)
+func DialWebsocketWithDialerHeaders(ctx context.Context, endpoint, origin string, dialer websocket.Dialer, headers http.Header) (*Client, error) {
+	endpoint, _, err := wsClientHeaders(endpoint, origin)
 	if err != nil {
 		return nil, err
 	}
 	return newClient(ctx, func(ctx context.Context) (ServerCodec, error) {
-		conn, resp, err := dialer.DialContext(ctx, endpoint, header)
+		conn, resp, err := dialer.DialContext(ctx, endpoint, headers)
 		if err != nil {
 			hErr := wsHandshakeError{err: err}
 			if resp != nil {
@@ -200,18 +198,32 @@ func DialWebsocketWithDialer(ctx context.Context, endpoint, origin string, diale
 	})
 }
 
+// DialWebsocketWithDialer creates a new RPC client that communicates with a JSON-RPC server
+// that is listening on the given endpoint using the provided dialer.
+func DialWebsocketWithDialer(ctx context.Context, endpoint, origin string, dialer websocket.Dialer) (*Client, error) {
+	endpoint, header, err := wsClientHeaders(endpoint, origin)
+	if err != nil {
+		return nil, err
+	}
+	return DialWebsocketWithDialerHeaders(ctx, endpoint, origin, dialer, header)
+}
+
 // DialWebsocket creates a new RPC client that communicates with a JSON-RPC server
 // that is listening on the given endpoint.
 //
 // The context is used for the initial connection establishment. It does not
 // affect subsequent interactions with the client.
 func DialWebsocket(ctx context.Context, endpoint, origin string) (*Client, error) {
-	dialer := websocket.Dialer{
+	return DialWebsocketWithDialer(ctx, endpoint, origin, WebsocketDialer())
+}
+
+// WebsocketDialer allocates a dialer with default buffer parameters set.
+func WebsocketDialer() websocket.Dialer {
+	return websocket.Dialer{
 		ReadBufferSize:  wsReadBuffer,
 		WriteBufferSize: wsWriteBuffer,
 		WriteBufferPool: wsBufferPool,
 	}
-	return DialWebsocketWithDialer(ctx, endpoint, origin, dialer)
 }
 
 func wsClientHeaders(endpoint, origin string) (string, http.Header, error) {
