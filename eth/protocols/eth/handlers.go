@@ -305,6 +305,7 @@ func handleNewBlock(backend Backend, msg Decoder, peer *Peer) error {
 	}
 	ann.Block.ReceivedAt = msg.Time()
 	ann.Block.ReceivedFrom = peer
+	peer.Log().Info("bloXroute - handle newBlock", "hash", ann.Block.Hash())
 
 	// Mark the peer as owning the block
 	peer.markBlock(ann.Block.Hash())
