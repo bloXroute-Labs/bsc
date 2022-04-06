@@ -332,12 +332,17 @@ func (ps *peerSet) peersWithoutTransaction(hash common.Hash) []*ethPeer {
 	defer ps.lock.RUnlock()
 
 	list := make([]*ethPeer, 0, len(ps.peers))
+	trusted := make([]*ethPeer, 0, len(ps.peers))
 	for _, p := range ps.peers {
 		if !p.KnownTransaction(hash) {
-			list = append(list, p)
+			if !p.Trusted() {
+				list = append(list, p)
+			} else {
+				trusted = append(trusted, p)
+			}
 		}
 	}
-	return list
+	return append(trusted, list...)
 }
 
 // len returns if the current number of `eth` peers in the set. Since the `snap`
